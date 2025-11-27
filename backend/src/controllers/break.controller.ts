@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import { AuthRequest } from './auth.controller';
 import { Server } from 'socket.io';
 import { sendViolationEmail } from '../utils/email';
+import { scheduleSession } from '../utils/violationScheduler';
 
 const prisma = new PrismaClient();
 
@@ -94,6 +95,13 @@ export const startBreak = async (req: AuthRequest, res: Response) => {
             },
             include: { breakType: true }
         });
+
+        // Schedule a check to alert managers at expected end time (if session still ongoing)
+        try {
+            scheduleSession(session);
+        } catch (e) {
+            console.error('Failed to schedule violation check for session:', e);
+        }
 
         // Emit socket event
         const io: Server = req.app.get('io');

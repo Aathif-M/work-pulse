@@ -56,3 +56,41 @@ export const sendViolationEmail = async (
         console.error('Error sending violation email:', error);
     }
 };
+
+interface ViolationAlertData {
+    agentName: string;
+    breakType: string;
+    sessionId?: number;
+}
+
+export const sendViolationAlertEmail = async (
+    recipients: string[],
+    data: ViolationAlertData
+) => {
+    if (recipients.length === 0) return;
+
+    const subject = `Break Overdue: ${data.agentName}`;
+    const html = `
+        <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
+            <h2 style="color: #f39c12;">Break Overdue Alert</h2>
+            <p><strong>Agent:</strong> ${data.agentName}</p>
+            <p><strong>Break Type:</strong> ${data.breakType}</p>
+            <hr />
+            <p>The above agent's break has reached its expected end time and is now overdue. Please visit <a href="https://breaktrack.com">BreakTrack</a> to review the session.</p>
+            <br />
+            <p><em>BreakTrack System</em></p>
+        </div>
+    `;
+
+    try {
+        await transporter.sendMail({
+            from: `"BreakTrack System" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
+            to: recipients,
+            subject,
+            html,
+        });
+        console.log(`Violation alert email sent to: ${recipients.join(', ')}`);
+    } catch (error) {
+        console.error('Error sending violation alert email:', error);
+    }
+};

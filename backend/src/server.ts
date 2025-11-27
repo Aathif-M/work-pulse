@@ -12,6 +12,7 @@ import cors from 'cors';
 import authRoutes from './routes/auth.routes';
 import userRoutes from './routes/user.routes';
 import breakRoutes from './routes/break.routes';
+import { initScheduler } from './utils/violationScheduler';
 
 const app = express();
 const server = http.createServer(app);
@@ -78,4 +79,6 @@ io.on('connection', async (socket) => {
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  // Initialize violation scheduler for ongoing sessions
+  initScheduler().catch(e => console.error('Violation scheduler init failed:', e));
 });
