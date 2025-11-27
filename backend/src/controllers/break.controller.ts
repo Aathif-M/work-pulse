@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { AuthRequest } from './auth.controller';
 import { Server } from 'socket.io';
+import { sendViolationEmail } from '../utils/email';
 
 const prisma = new PrismaClient();
 
@@ -144,8 +145,38 @@ export const endBreak = async (req: AuthRequest, res: Response) => {
 
         // Send email if violation
         if (violationDuration > 0) {
-            // TODO: Implement email sending
-            console.log('Sending violation email...');
+            try {
+                // Fetch agent details
+                const agent = await prisma.user.findUnique({
+                    where: { id: userId }
+                });
+
+                // Fetch all Managers and Super Admins
+                const managers = await prisma.user.findMany({
+                    where: { 
+                        role: { in: ['MANAGER', 'SUPER_ADMIN'] }
+                    },
+                    select: { email: true }
+                });
+
+                const recipients = managers.map(manager => manager.email);
+
+                if (agent && recipients.length > 0) {
+                    const actualDurationSeconds = Math.floor((endTime.getTime() - session.startTime.getTime()) / 1000);
+
+                    await sendViolationEmail(recipients, {
+                        agentName: agent.name,
+                        breakType: session.breakType.name,
+                        expectedDuration: Math.floor(session.breakType.duration / 60),
+                        actualDuration: Math.floor(actualDurationSeconds / 60),
+                        violationDuration: Math.floor(violationDuration / 60),
+                        startTime: session.startTime,
+                        endTime: endTime
+                    });
+                }
+            } catch (emailError) {
+                console.error('Failed to send violation email:', emailError);
+            }
         }
 
         res.json(updatedSession);
@@ -183,41 +214,6 @@ export const getAllHistory = async (req: AuthRequest, res: Response) => {
             orderBy: { startTime: 'desc' }
         });
         res.json(history);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server error' });
-    }
-};
-
-export const getReports = async (req: Request, res: Response) => {
-    try {
-        const { startDate, endDate, userId } = req.query;
-
-        const where: any = {};
-
-        if (startDate && endDate) {
-            where.startTime = {
-                gte: new Date(startDate as string),
-                lte: new Date(endDate as string),
-            };
-        }
-
-        if (userId) {
-            where.userId = parseInt(userId as string);
-        }
-
-        const sessions = await prisma.breakSession.findMany({
-            where,
-            include: {
-                user: true,
-                breakType: true,
-            },
-            orderBy: {
-                startTime: 'desc',
-            },
-        });
-
-        res.json(sessions);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error' });

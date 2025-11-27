@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../api/axios';
+import html2pdf from 'html2pdf.js';
 
 const ManagerHistory = () => {
     const [history, setHistory] = useState([]);
@@ -132,7 +133,7 @@ const ManagerHistory = () => {
     };
 
     const calculateDuration = (startTime, endTime) => {
-        if (!endTime) return { minutes: 0, display: '-' };
+        if (!endTime) return { minutes: 0, display: '--' };
         const start = new Date(startTime);
         const end = new Date(endTime);
         const diff = Math.floor((end - start) / 1000); // in seconds
@@ -146,6 +147,15 @@ const ManagerHistory = () => {
         return date.toLocaleString();
     };
 
+    const formatMinutesToHM = (minutes) => {
+        if (!minutes || minutes === 0) return '0m';
+        const hours = Math.floor(minutes / 60);
+        const mins = minutes % 60;
+        if (hours === 0) return `${mins}m`;
+        if (mins === 0) return `${hours}h`;
+        return `${hours}h ${mins}m`;
+    };
+
     const getStatusColor = (status) => {
         switch (status) {
             case 'ONGOING':
@@ -155,6 +165,206 @@ const ManagerHistory = () => {
             default:
                 return 'badge-info';
         }
+    };
+
+    const exportToPDF = () => {
+        if (filteredData.length === 0) {
+            alert('No data to export');
+            return;
+        }
+
+        const element = document.createElement('div');
+        element.style.padding = '20px';
+        element.style.fontFamily = 'Arial, sans-serif';
+
+        // Title
+        const title = document.createElement('h1');
+        title.textContent = 'Break History Report';
+        title.style.textAlign = 'center';
+        title.style.marginBottom = '10px';
+        element.appendChild(title);
+
+        // Export date
+        const date = document.createElement('p');
+        date.textContent = `Generated: ${new Date().toLocaleString()}`;
+        date.style.textAlign = 'center';
+        date.style.color = '#666';
+        date.style.marginBottom = '20px';
+        element.appendChild(date);
+
+        // Statistics Section
+        const statsDiv = document.createElement('div');
+        statsDiv.style.marginBottom = '20px';
+        statsDiv.style.pageBreakInside = 'avoid';
+        const statsTitle = document.createElement('h2');
+        statsTitle.textContent = 'Summary Statistics';
+        statsTitle.style.fontSize = '16px';
+        statsTitle.style.borderBottom = '2px solid #333';
+        statsTitle.style.paddingBottom = '10px';
+        statsTitle.style.marginBottom = '10px';
+        statsDiv.appendChild(statsTitle);
+
+        const statsGrid = document.createElement('div');
+        statsGrid.style.display = 'grid';
+        statsGrid.style.gridTemplateColumns = 'repeat(4, 1fr)';
+        statsGrid.style.gap = '10px';
+        statsGrid.style.marginBottom = '15px';
+
+        const statItems = [
+            { label: 'Total Sessions', value: stats.totalSessions },
+            { label: 'Completed Sessions', value: stats.completedSessions },
+            { label: 'Break Violations', value: stats.violationCount },
+            { label: 'Total Duration', value: formatMinutesToHM(stats.totalDuration) }
+        ];
+
+        statItems.forEach(item => {
+            const statBox = document.createElement('div');
+            statBox.style.border = '1px solid #ddd';
+            statBox.style.padding = '10px';
+            statBox.style.borderRadius = '5px';
+            statBox.style.backgroundColor = '#f9f9f9';
+
+            const label = document.createElement('p');
+            label.textContent = item.label;
+            label.style.fontSize = '12px';
+            label.style.color = '#666';
+            label.style.margin = '0 0 5px 0';
+
+            const value = document.createElement('p');
+            value.textContent = item.value;
+            value.style.fontSize = '18px';
+            value.style.fontWeight = 'bold';
+            value.style.margin = '0';
+
+            statBox.appendChild(label);
+            statBox.appendChild(value);
+            statsGrid.appendChild(statBox);
+        });
+
+        statsDiv.appendChild(statsGrid);
+        element.appendChild(statsDiv);
+
+        // Filters Applied Section
+        const filtersDiv = document.createElement('div');
+        filtersDiv.style.marginBottom = '20px';
+        filtersDiv.style.pageBreakInside = 'avoid';
+        const filtersTitle = document.createElement('h2');
+        filtersTitle.textContent = 'Filters Applied';
+        filtersTitle.style.fontSize = '16px';
+        filtersTitle.style.borderBottom = '2px solid #333';
+        filtersTitle.style.paddingBottom = '10px';
+        filtersTitle.style.marginBottom = '10px';
+        filtersDiv.appendChild(filtersTitle);
+
+        const filtersList = document.createElement('ul');
+        filtersList.style.margin = '0';
+        filtersList.style.paddingLeft = '20px';
+
+        const filters = [
+            { name: 'Agent', value: filterAgent === 'ALL' ? 'All Agents' : agents.find(a => a.id === parseInt(filterAgent))?.name || 'Unknown' },
+            { name: 'Break Type', value: filterBreakType === 'ALL' ? 'All Types' : breakTypes.find(t => t.id === parseInt(filterBreakType))?.name || 'Unknown' },
+            { name: 'Status', value: filterStatus === 'ALL' ? 'All Status' : filterStatus },
+            { name: 'Date Range', value: dateRange === 'custom' ? `${customStartDate} to ${customEndDate}` : dateRange },
+            { name: 'Sort By', value: sortBy }
+        ];
+
+        filters.forEach(filter => {
+            const li = document.createElement('li');
+            li.textContent = `${filter.name}: ${filter.value}`;
+            li.style.marginBottom = '5px';
+            filtersList.appendChild(li);
+        });
+
+        filtersDiv.appendChild(filtersList);
+        element.appendChild(filtersDiv);
+
+        // Data Table Section
+        const tableDiv = document.createElement('div');
+        tableDiv.style.marginBottom = '20px';
+        const tableTitle = document.createElement('h2');
+        tableTitle.textContent = `Break Sessions (${filteredData.length} records)`;
+        tableTitle.style.fontSize = '16px';
+        tableTitle.style.borderBottom = '2px solid #333';
+        tableTitle.style.paddingBottom = '10px';
+        tableTitle.style.marginBottom = '10px';
+        tableDiv.appendChild(tableTitle);
+
+        const table = document.createElement('table');
+        table.style.width = '100%';
+        table.style.borderCollapse = 'collapse';
+        table.style.fontSize = '11px';
+        table.style.marginBottom = '20px';
+
+        const thead = document.createElement('thead');
+        const headerRow = document.createElement('tr');
+        headerRow.style.backgroundColor = '#f0f0f0';
+        headerRow.style.borderBottom = '2px solid #333';
+
+        const headers = ['Agent', 'Break Type', 'Start Time', 'End Time', 'Duration', 'Status', 'Violation'];
+        headers.forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            th.style.padding = '8px';
+            th.style.textAlign = 'left';
+            th.style.fontWeight = 'bold';
+            th.style.borderRight = '1px solid #ddd';
+            headerRow.appendChild(th);
+        });
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+
+        const tbody = document.createElement('tbody');
+        filteredData.forEach((session, index) => {
+            const row = document.createElement('tr');
+            row.style.borderBottom = '1px solid #ddd';
+            if (index % 2 === 0) {
+                row.style.backgroundColor = '#f9f9f9';
+            }
+
+            const cells = [
+                session.user?.name || 'Unknown',
+                session.breakType?.name || 'Unknown',
+                new Date(session.startTime).toLocaleString(),
+                session.endTime ? new Date(session.endTime).toLocaleString() : 'Ongoing',
+                calculateDuration(session.startTime, session.endTime).display,
+                session.status,
+                session.violationDuration ? formatMinutesToHM(Math.floor(session.violationDuration / 60)) : '-'
+            ];
+
+            cells.forEach(cellContent => {
+                const td = document.createElement('td');
+                td.textContent = cellContent;
+                td.style.padding = '8px';
+                td.style.borderRight = '1px solid #ddd';
+                row.appendChild(td);
+            });
+
+            tbody.appendChild(row);
+        });
+        table.appendChild(tbody);
+        tableDiv.appendChild(table);
+        element.appendChild(tableDiv);
+
+        // Footer
+        const footer = document.createElement('p');
+        footer.textContent = 'This is an automatically generated report from BreakTrack';
+        footer.style.textAlign = 'center';
+        footer.style.fontSize = '10px';
+        footer.style.color = '#999';
+        footer.style.marginTop = '30px';
+        footer.style.borderTop = '1px solid #ddd';
+        footer.style.paddingTop = '10px';
+        element.appendChild(footer);
+
+        const opt = {
+            margin: 10,
+            filename: `break-history-${new Date().toISOString().split('T')[0]}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { orientation: 'landscape', unit: 'mm', format: 'a4' }
+        };
+
+        html2pdf().set(opt).from(element).save();
     };
 
     const filteredData = getFilteredHistory();
@@ -235,21 +445,21 @@ const ManagerHistory = () => {
 
             {/* Statistics Cards */}
             <div className="grid bg-white p-6 rounded-lg shadow grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div className="stat-card bg-gray-50 p-6 rounded-lg shadow">
+                <div className="stat-card bg-gray-50 p-6 rounded-lg shadow-lg border-t-4 border-gray-500">
                     <div className="stat-card-label">Total Sessions</div>
                     <div className="stat-card-value text-2xl">{stats.totalSessions}</div>
                 </div>
-                <div className="stat-card bg-gray-50 p-6 rounded-lg shadow">
+                <div className="stat-card bg-gray-50 p-6 rounded-lg shadow-lg border-t-4 border-gray-500">
                     <div className="stat-card-label">Completed Sessions</div>
                     <div className="stat-card-value text-2xl">{stats.completedSessions}</div>
                 </div>
-                <div className="stat-card bg-gray-50 p-6 rounded-lg shadow">
+                <div className="stat-card bg-gray-50 p-6 rounded-lg shadow-lg border-t-4 border-gray-500">
                     <div className="stat-card-label">Break Violations</div>
                     <div className="stat-card-value text-2xl font-bold text-red-700 mt-1">{stats.violationCount}</div>
                 </div>
-                <div className="stat-card bg-gray-50 p-6 rounded-lg shadow">
+                <div className="stat-card bg-gray-50 p-6 rounded-lg shadow-lg border-t-4 border-gray-500">
                     <div className="stat-card-label">Total Duration</div>
-                    <div className="stat-card-value text-2xl">{stats.totalDuration} <span className="text-lg">mins</span></div>
+                    <div className="stat-card-value text-2xl">{formatMinutesToHM(stats.totalDuration)}</div>
                 </div>
             </div>
 
@@ -370,18 +580,23 @@ const ManagerHistory = () => {
                             <option value="agent">Agent Name</option>
                         </select>
                     </div>
-
-                    <div className="flex items-end gap-2">
-                        <button
-                            onClick={fetchAllData}
-                            className="flex-1 btn-primary"
-                        >
-                            ↻ Refresh
-                        </button>
-                    </div>
                 </div>
 
-                <div className="flex gap-2 flex-wrap pt-4 border-t">
+                <div className="flex place-items-end gap-2 flex-wrap pt-4 border-t justify-end">
+                    <button
+                        onClick={fetchAllData}
+                        className="p-4 bg-gray-700 py-2 rounded hover:bg-gray-600 transition-colors text-white"
+                    >
+                        ↻ Refresh
+                    </button>
+
+                    <button
+                        onClick={exportToPDF}
+                        className="p-4 bg-red-800 py-2 rounded hover:bg-red-700 transition-colors text-white font-semibold"
+                    >
+                        ↓ Export to PDF
+                    </button>
+
                     <button
                         onClick={() => {
                             setFilterAgent('ALL');
@@ -391,9 +606,9 @@ const ManagerHistory = () => {
                             setSearchAgent('');
                             setSortBy('recent');
                         }}
-                        className="btn-secondary"
+                        className="p-4 bg-blue-700 py-2 rounded hover:bg-blue-600 transition-colors text-white"
                     >
-                        Clear All Filters
+                        ⨯ Clear All Filters
                     </button>
                 </div>
             </div>
@@ -406,7 +621,7 @@ const ManagerHistory = () => {
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {Object.entries(agentStats).map(([agentId, stats]) => (
-                            <div key={agentId} className="card-inner bg-white p-6 rounded-lg shadow border-t-4 border-blue-900">
+                            <div key={agentId} className="card-inner bg-white p-6 rounded-lg shadow-lg border-t-4 border-gray-500">
                                 <div className="font-bold text-gray-900 mb-3 text-lg">{stats.name}</div>
                                 <div className="space-y-2 text-sm">
                                     <div className="flex justify-between items-center">
@@ -422,7 +637,7 @@ const ManagerHistory = () => {
                                     <div className="flex justify-between items-center">
                                         <span className="text-gray-600">Total Violation:</span>
                                         <span className="badge badge-warning">
-                                            {Math.floor(stats.totalViolationTime / 60)}m
+                                            {formatMinutesToHM(Math.floor(stats.totalViolationTime / 60))}
                                         </span>
                                     </div>
                                 </div>
@@ -440,7 +655,7 @@ const ManagerHistory = () => {
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {Object.entries(breakTypeStats).map(([typeId, stats]) => (
-                            <div key={typeId} className="card-inner bg-white p-6 rounded-lg shadow border-t-4 border-blue-900">
+                            <div key={typeId} className="card-inner bg-white p-6 rounded-lg shadow-lg border-t-4 border-gray-500">
                                 <div className="font-bold text-gray-900 mb-3 text-lg">{stats.name}</div>
                                 <div className="space-y-2 text-sm">
                                     <div className="flex justify-between items-center">
@@ -450,13 +665,13 @@ const ManagerHistory = () => {
                                     <div className="flex justify-between items-center">
                                         <span className="text-gray-600">Total Duration:</span>
                                         <span className="font-semibold text-gray-900">
-                                            {Math.floor(stats.totalDuration)}m
+                                            {formatMinutesToHM(Math.floor(stats.totalDuration))}
                                         </span>
                                     </div>
                                     <div className="flex justify-between items-center">
                                         <span className="text-gray-600">Average:</span>
                                         <span className="font-semibold text-gray-900">
-                                            {Math.floor(stats.totalDuration / stats.count)}m
+                                            {formatMinutesToHM(Math.floor(stats.totalDuration / stats.count))}
                                         </span>
                                     </div>
                                 </div>
@@ -507,23 +722,27 @@ const ManagerHistory = () => {
                                             <td className="p-4 text-gray-700">{session.breakType?.name}</td>
                                             <td className="p-4 text-gray-700 text-sm">{formatDateTime(session.startTime)}</td>
                                             <td className="p-4 text-gray-700 text-sm">
-                                                {session.endTime ? formatDateTime(session.endTime) : <span className="text-orange-600 font-medium">Ongoing</span>}
+                                                {session.endTime ? formatDateTime(session.endTime) : <span className="font-semibold text-gray-900 text-lg">--</span>}
                                             </td>
                                             <td className="p-4 font-semibold text-gray-900">
                                                 {calculateDuration(session.startTime, session.endTime).display}
                                             </td>
                                             <td className="p-4">
-                                                <span className={`badge ${getStatusColor(session.status)}`}>
+                                                <span className={`px-2 py-1 rounded text-xs ${
+                                                    session.status === 'ONGOING' 
+                                                        ? 'bg-blue-100 text-blue-800' 
+                                                        : 'bg-gray-100 text-gray-800'
+                                                }`}>
                                                     {session.status}
                                                 </span>
                                             </td>
                                             <td className="p-4">
                                                 {session.violationDuration ? (
-                                                    <span className="badge badge-danger text-red-400 text-lg">
-                                                        +{Math.floor(session.violationDuration / 60)}m
+                                                    <span className="bg-red-100 text-red-800 p-1 rounded px-3">
+                                                        +{formatMinutesToHM(Math.floor(session.violationDuration / 60))}
                                                     </span>
                                                 ) : (
-                                                    <span className="badge badge-success">✓ On Time</span>
+                                                    <span className="font-semibold text-gray-900">-</span>
                                                 )}
                                             </td>
                                             <td className="p-4">
@@ -539,42 +758,42 @@ const ManagerHistory = () => {
                                             <tr className="bg-blue-10 fade-in">
                                                 <td colSpan="8" className="p-6 border-b border-blue-200">
                                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                                        <div className="bg-white p-6 rounded-lg shadow border-l-4 border-blue-900">
+                                                        <div className="bg-gray-50 p-6 rounded-lg shadow border-l-4 border-blue-700">
                                                             <p className="text-xs text-gray-600 font-bold uppercase mb-1">Agent Name</p>
                                                             <p className="font-bold text-gray-900 text-lg">
                                                                 {session.user?.name}
                                                             </p>
                                                         </div>
-                                                        <div className="card p-4 border-l-4 border-green-600 bg-white shadow">
+                                                        <div className="bg-gray-50 p-6 rounded-lg shadow border-l-4 border-green-700">
                                                             <p className="text-xs text-gray-600 font-bold uppercase mb-1">Break Type</p>
                                                             <p className="font-bold text-gray-900 text-lg">
                                                                 {session.breakType?.name}
                                                             </p>
                                                         </div>
-                                                        <div className="card p-4 border-l-4 border-purple-600 bg-white shadow">
+                                                        <div className="bg-gray-50 p-6 rounded-lg shadow border-l-4 border-purple-700">
                                                             <p className="text-xs text-gray-600 font-bold uppercase mb-1">Session ID</p>
                                                             <p className="font-bold text-gray-900 text-lg">#{session.id}</p>
                                                         </div>
-                                                        <div className="card p-4 border-l-4 border-indigo-600 bg-white shadow">
+                                                        <div className="bg-gray-50 p-6 rounded-lg shadow border-l-4 border-indigo-700">
                                                             <p className="text-xs text-gray-600 font-bold uppercase mb-1">Expected Duration</p>
                                                             <p className="font-bold text-gray-900 text-lg">
-                                                                {Math.floor(session.breakType?.duration / 60)}m
+                                                                {formatMinutesToHM(Math.floor(session.breakType?.duration / 60))}
                                                             </p>
                                                         </div>
-                                                        <div className="card p-4 border-l-4 border-amber-600 bg-white shadow">
+                                                        <div className="bg-gray-50 p-6 rounded-lg shadow border-l-4 border-amber-900">
                                                             <p className="text-xs text-gray-600 font-bold uppercase mb-1">Actual Duration</p>
                                                             <p className="font-bold text-gray-900 text-lg">
                                                                 {calculateDuration(session.startTime, session.endTime).display}
                                                             </p>
                                                         </div>
-                                                        <div className={`card p-4 border-l-4 bg-white shadow ${session.violationDuration ? 'border-red-600' : !session.endTime ? 'border-blue-600' : 'border-green-600'}`}>
+                                                        <div className={`bg-gray-50 p-6 rounded-lg shadow border-l-4  ${session.violationDuration ? 'border-red-600' : !session.endTime ? 'border-blue-600' : 'border-green-600'}`}>
                                                             <p className="text-xs text-gray-600 font-bold uppercase mb-1">Status</p>
                                                             <p className={`font-bold text-lg ${session.violationDuration ? 'text-red-600' : !session.endTime ? 'text-blue-600' : 'text-green-600'}`}>
                                                                 {session.violationDuration
-                                                                    ? ` +${Math.floor(session.violationDuration / 60)}m (Over)`
+                                                                    ? ` +${formatMinutesToHM(Math.floor(session.violationDuration / 60))} (Violation)`
                                                                     : !session.endTime
                                                                         ? 'Ongoing'
-                                                                        : '✓ On Time'}
+                                                                        : 'On Time'}
                                                             </p>
                                                         </div>
                                                     </div>
@@ -590,11 +809,11 @@ const ManagerHistory = () => {
             </div>
 
             {/* Summary Footer */}
-            <div className="card p-6 border-l-4 border-blue-900 bg-gradient-to-r from-blue-50 to-transparent">
+            <div className="bg-white p-6 rounded-lg shadow border-l-4 border-blue-900">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                         <p className="text-xs text-gray-600 font-bold uppercase mb-1">Records Shown</p>
-                        <p className="text-2xl font-bold text-blue-600">{filteredData.length}</p>
+                        <p className="text-2xl font-bold text-blue-700">{filteredData.length}</p>
                     </div>
                     <div>
                         <p className="text-xs text-gray-600 font-bold uppercase mb-1">Total Records</p>
@@ -602,7 +821,7 @@ const ManagerHistory = () => {
                     </div>
                     <div>
                         <p className="text-xs text-gray-600 font-bold uppercase mb-1">Average Session</p>
-                        <p className="text-2xl font-bold text-purple-600">{stats.averageDuration}m</p>
+                        <p className="text-2xl font-bold text-purple-700">{formatMinutesToHM(stats.averageDuration)}</p>
                     </div>
                 </div>
             </div>

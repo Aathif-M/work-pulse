@@ -23,7 +23,6 @@ const ManagerDashboard = () => {
                     <Link to="/manager/agents" className={`block py-2 px-4 rounded mb-2 ${location.pathname.includes('/agents') ? 'bg-blue-800' : 'hover:bg-blue-800'}`}>{user.role === 'SUPER_ADMIN' ? 'Users' : 'Agents'}</Link>
                     <Link to="/manager/breaks" className={`block py-2 px-4 rounded mb-2 ${location.pathname.includes('/breaks') ? 'bg-blue-800' : 'hover:bg-blue-800'}`}>Breaks</Link>
                     <Link to="/manager/history" className={`block py-2 px-4 rounded mb-2 ${location.pathname.includes('/history') ? 'bg-blue-800' : 'hover:bg-blue-800'}`}>History</Link>
-                    <Link to="/manager/reports" className={`block py-2 px-4 rounded mb-2 ${location.pathname.includes('/reports') ? 'bg-blue-800' : 'hover:bg-blue-800'}`}>Reports</Link>
                 </nav>
                 <div className="mt-auto">
                     <div className="mb-4 text-sm text-blue-200">
@@ -42,7 +41,7 @@ const ManagerDashboard = () => {
                         {isMainDashboard ? 'Manager Dashboard' :
                             location.pathname.includes('/agents') ? 'Agent Management' :
                                 location.pathname.includes('/breaks') ? 'Break Management' :
-                                    location.pathname.includes('/history') ? 'Break History & Analytics' : 'Reports'}
+                                    'Break History & Analytics'}
                     </h2>
                 </header>
 

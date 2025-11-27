@@ -8,7 +8,6 @@ import ManagerDashboard from './pages/ManagerDashboard';
 import ManagerAgents from './pages/ManagerAgents';
 import ManagerBreaks from './pages/ManagerBreaks';
 import ManagerHistory from './pages/ManagerHistory';
-import Reports from './pages/Reports';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
@@ -56,8 +55,6 @@ function App() {
               <Route path="agents" element={<ManagerAgents />} />
               <Route path="breaks" element={<ManagerBreaks />} />
               <Route path="history" element={<ManagerHistory />} />
-              <Route path="reports" element={<Reports />} />
-              {/* <Route path="reports" element={<ManagerReports />} /> */}
             </Route>
             <Route path="/" element={<Navigate to="/login" />} />
           </Routes>

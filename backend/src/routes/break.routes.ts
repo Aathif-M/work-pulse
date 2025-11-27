@@ -1,5 +1,5 @@
 import express from 'express';
-import { createBreakType, updateBreakType, getBreakTypes, startBreak, endBreak, getHistory, getAllHistory, getReports } from '../controllers/break.controller';
+import { createBreakType, updateBreakType, getBreakTypes, startBreak, endBreak, getHistory, getAllHistory } from '../controllers/break.controller';
 import { verifyToken } from '../controllers/auth.controller';
 
 const router = express.Router();
@@ -16,6 +16,5 @@ router.post('/start', startBreak as express.RequestHandler);
 router.post('/end', endBreak as express.RequestHandler);
 router.get('/history', getHistory as express.RequestHandler);
 router.get('/history/all', getAllHistory as express.RequestHandler);
-router.get('/reports', getReports as express.RequestHandler);
 
 export default router;

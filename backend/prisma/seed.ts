@@ -5,13 +5,13 @@ const prisma = new PrismaClient();
 
 async function main() {
     // Create Super Admin
-    const hashedPassword = await bcrypt.hash('admin123', 10);
+    const hashedPassword = await bcrypt.hash('jd123', 10);
     const admin = await prisma.user.upsert({
-        where: { email: 'admin@breaktrack.com' },
+        where: { email: 'thesecondjohndoe99@gmail.com' },
         update: {},
         create: {
-            name: 'Super Admin',
-            email: 'admin@breaktrack.com',
+            name: 'John Doe',
+            email: 'thesecondjohndoe99@gmail.com',
             password: hashedPassword,
             role: 'SUPER_ADMIN',
         },
