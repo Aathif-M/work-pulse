@@ -93,56 +93,58 @@ const ManagerAgents = () => {
             </div>
 
             <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-                <table className="w-full text-left">
-                    <thead className="bg-gray-50 border-b">
-                        <tr>
-                            <th className="p-4 text-gray-600 font-medium">ID</th>
-                            <th className="p-4 text-gray-600 font-medium">Name</th>
-                            <th className="p-4 text-gray-600 font-medium">Email</th>
-                            <th className="p-4 text-gray-600 font-medium">Role</th>
-                            <th className="p-4 text-gray-600 font-medium">Created By</th>
-                            <th className="p-4 text-gray-600 font-medium">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {agents.map(agent => (
-                            <tr key={agent.id} className="border-b last:border-0 hover:bg-gray-50">
-                                <td className="p-4 text-gray-500">#{agent.id.toString().padStart(3, '0')}</td>
-                                <td className="p-4 font-medium">{agent.name}</td>
-                                <td className="p-4 text-gray-600">{agent.email}</td>
-                                <td className="p-4">
-                                    <span className={`px-2 py-1 rounded text-xs font-medium ${agent.role === 'MANAGER' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
-                                        }`}>
-                                        {agent.role}
-                                    </span>
-                                </td>
-                                <td className="p-4 text-gray-600">{agent.createdBy?.name || '-'}</td>
-                                <td className="p-4">
-                                    <button
-                                        onClick={() => handleResetPassword(agent.id)}
-                                        className="text-blue-500 hover:text-blue-700 p-2"
-                                        title="Reset Password"
-                                    >
-                                        <RotateCcw size={18} />
-                                    </button>
-                                    <button
-                                        onClick={() => handleEdit(agent)}
-                                        className="text-gray-500 hover:text-gray-700 p-2"
-                                        title="Edit User"
-                                    >
-                                        <Edit size={18} />
-                                    </button>
-                                    <button
-                                        onClick={() => handleDelete(agent.id)}
-                                        className="text-red-500 hover:text-red-700 p-2"
-                                    >
-                                        <Trash2 size={18} />
-                                    </button>
-                                </td>
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left">
+                        <thead className="bg-gray-50 border-b">
+                            <tr>
+                                <th className="p-4 text-gray-600 font-medium">ID</th>
+                                <th className="p-4 text-gray-600 font-medium">Name</th>
+                                <th className="p-4 text-gray-600 font-medium">Email</th>
+                                <th className="p-4 text-gray-600 font-medium">Role</th>
+                                <th className="p-4 text-gray-600 font-medium">Created By</th>
+                                <th className="p-4 text-gray-600 font-medium">Actions</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {agents.map(agent => (
+                                <tr key={agent.id} className="border-b last:border-0 hover:bg-gray-50">
+                                    <td className="p-4 text-gray-500">#{agent.id.toString().padStart(3, '0')}</td>
+                                    <td className="p-4 font-medium">{agent.name}</td>
+                                    <td className="p-4 text-gray-600">{agent.email}</td>
+                                    <td className="p-4">
+                                        <span className={`px-2 py-1 rounded text-xs font-medium ${agent.role === 'MANAGER' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
+                                            }`}>
+                                            {agent.role}
+                                        </span>
+                                    </td>
+                                    <td className="p-4 text-gray-600">{agent.createdBy?.name || '-'}</td>
+                                    <td className="p-4">
+                                        <button
+                                            onClick={() => handleResetPassword(agent.id)}
+                                            className="text-blue-500 hover:text-blue-700 p-2"
+                                            title="Reset Password"
+                                        >
+                                            <RotateCcw size={18} />
+                                        </button>
+                                        <button
+                                            onClick={() => handleEdit(agent)}
+                                            className="text-gray-500 hover:text-gray-700 p-2"
+                                            title="Edit User"
+                                        >
+                                            <Edit size={18} />
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(agent.id)}
+                                            className="text-red-500 hover:text-red-700 p-2"
+                                        >
+                                            <Trash2 size={18} />
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={editingId ? "Edit User" : "Add New User"}>
@@ -191,7 +193,7 @@ const ManagerAgents = () => {
                     </button>
                 </form>
             </Modal>
-        </div>
+        </div >
     );
 };
 

@@ -84,45 +84,47 @@ const ManagerBreaks = () => {
             </div>
 
             <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-                <table className="w-full text-left">
-                    <thead className="bg-gray-50 border-b">
-                        <tr>
-                            <th className="p-4 text-gray-600 font-medium">Break Name</th>
-                            <th className="p-4 text-gray-600 font-medium">Duration</th>
-                            <th className="p-4 text-gray-600 font-medium">Status</th>
-                            <th className="p-4 text-gray-600 font-medium">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {breaks.map(bt => (
-                            <tr key={bt.id} className="border-b last:border-0 hover:bg-gray-50">
-                                <td className="p-4 font-medium">{bt.name}</td>
-                                <td className="p-4 text-gray-600">
-                                    {Math.floor(bt.duration / 60)}:{(bt.duration % 60).toString().padStart(2, '0')}
-                                </td>
-                                <td className="p-4">
-                                    <span className={`px-2 py-1 rounded text-xs ${bt.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                                        {bt.isActive ? 'Active' : 'Disabled'}
-                                    </span>
-                                </td>
-                                <td className="p-4">
-                                    <button
-                                        onClick={() => openEditModal(bt)}
-                                        className="text-gray-400 hover:text-gray-600 p-2"
-                                    >
-                                        <Edit size={18} />
-                                    </button>
-                                    <button
-                                        onClick={() => handleDelete(bt.id)}
-                                        className="text-red-400 hover:text-red-600 p-2"
-                                    >
-                                        <Trash2 size={18} />
-                                    </button>
-                                </td>
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left">
+                        <thead className="bg-gray-50 border-b">
+                            <tr>
+                                <th className="p-4 text-gray-600 font-medium">Break Name</th>
+                                <th className="p-4 text-gray-600 font-medium">Duration</th>
+                                <th className="p-4 text-gray-600 font-medium">Status</th>
+                                <th className="p-4 text-gray-600 font-medium">Actions</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {breaks.map(bt => (
+                                <tr key={bt.id} className="border-b last:border-0 hover:bg-gray-50">
+                                    <td className="p-4 font-medium">{bt.name}</td>
+                                    <td className="p-4 text-gray-600">
+                                        {Math.floor(bt.duration / 60)}:{(bt.duration % 60).toString().padStart(2, '0')}
+                                    </td>
+                                    <td className="p-4">
+                                        <span className={`px-2 py-1 rounded text-xs ${bt.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                                            {bt.isActive ? 'Active' : 'Disabled'}
+                                        </span>
+                                    </td>
+                                    <td className="p-4">
+                                        <button
+                                            onClick={() => openEditModal(bt)}
+                                            className="text-gray-400 hover:text-gray-600 p-2"
+                                        >
+                                            <Edit size={18} />
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(bt.id)}
+                                            className="text-red-400 hover:text-red-600 p-2"
+                                        >
+                                            <Trash2 size={18} />
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <Modal isOpen={isAddModalOpen} onClose={() => setisAddModalOpen(false)} title={editingId ? "Edit Break" : "Add New Break"}>
@@ -186,7 +188,7 @@ const ManagerBreaks = () => {
                     </button>
                 </form>
             </Modal>
-        </div>
+        </div >
     );
 };
 

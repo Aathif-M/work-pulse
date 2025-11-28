@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import Timer from '../components/Timer';
 import ChangePasswordModal from '../components/ChangePasswordModal';
+import Layout from '../components/Layout';
 
 const UserDashboard = () => {
     const { user, logout } = useAuth();
@@ -62,33 +63,27 @@ const UserDashboard = () => {
         }
     };
 
-    return (
-        <div className="min-h-screen bg-gray-50 flex">
-            {/* Sidebar */}
-            <div className="w-64 bg-blue-900 text-white p-6 flex flex-col fixed h-screen top-0 left-0">
-                <h1 className="text-2xl font-bold mb-8">Break Track</h1>
-                <nav className="flex-1">
-                    <button
-                        onClick={() => navigate('/dashboard')}
-                        className="block w-full text-left py-2 px-4 bg-blue-800 rounded mb-2 transition hover:bg-blue-700"
-                    >
-                        Dashboard
-                    </button>
-                    <button
-                        onClick={() => navigate('/history')}
-                        className="block w-full text-left py-2 px-4 hover:bg-blue-800 rounded mb-2 transition"
-                    >
-                        History
-                    </button>
-                </nav>
-                <button onClick={logout} className="bg-blue-700 py-2 rounded hover:bg-blue-600 transition w-full">Logout</button>
-            </div>
-            <div className="w-64 bg-blue-900 text-white p-6 flex flex-col">
-            </div>
+    const navLinks = (
+        <>
+            <button
+                onClick={() => navigate('/dashboard')}
+                className="block w-full text-left py-2 px-4 bg-blue-800 rounded mb-2 transition hover:bg-blue-700"
+            >
+                Dashboard
+            </button>
+            <button
+                onClick={() => navigate('/history')}
+                className="block w-full text-left py-2 px-4 hover:bg-blue-800 rounded mb-2 transition"
+            >
+                History
+            </button>
+        </>
+    );
 
-            {/* Main Content */}
-            <div className="flex-1 p-8">
-                <header className="flex justify-between items-center mb-8">
+    return (
+        <Layout navLinks={navLinks}>
+            <div className="p-4 md:p-8">
+                <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                     <h2 className="text-2xl font-semibold text-gray-800">User Dashboard</h2>
                     <div className="flex items-center gap-2">
                         <span className="text-gray-600">Welcome,</span>
@@ -128,7 +123,7 @@ const UserDashboard = () => {
                     ) : (
                         <div>
                             <p className="text-gray-600 mb-4">Select a break type to start:</p>
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                                 {breakTypes.map(type => (
                                     <button
                                         key={type.id}
@@ -151,26 +146,26 @@ const UserDashboard = () => {
                         <table className="w-full text-left">
                             <thead>
                                 <tr className="border-b">
-                                    <th className="pb-3 text-gray-600">Type</th>
-                                    <th className="pb-3 text-gray-600">Start Time</th>
-                                    <th className="pb-3 text-gray-600">End Time</th>
-                                    <th className="pb-3 text-gray-600">Status</th>
-                                    <th className="pb-3 text-gray-600">Violation</th>
+                                    <th className="pb-3 text-gray-600 whitespace-nowrap px-2">Type</th>
+                                    <th className="pb-3 text-gray-600 whitespace-nowrap px-2">Start Time</th>
+                                    <th className="pb-3 text-gray-600 whitespace-nowrap px-2">End Time</th>
+                                    <th className="pb-3 text-gray-600 whitespace-nowrap px-2">Status</th>
+                                    <th className="pb-3 text-gray-600 whitespace-nowrap px-2">Violation</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {history.slice(0, 5).map(session => (
                                     <tr key={session.id} className="border-b last:border-0">
-                                        <td className="py-3">{session.breakType.name}</td>
-                                        <td className="py-3">{new Date(session.startTime).toLocaleTimeString()}</td>
-                                        <td className="py-3">{session.endTime ? new Date(session.endTime).toLocaleTimeString() : '-'}</td>
-                                        <td className="py-3">
+                                        <td className="py-3 px-2 whitespace-nowrap">{session.breakType.name}</td>
+                                        <td className="py-3 px-2 whitespace-nowrap">{new Date(session.startTime).toLocaleTimeString()}</td>
+                                        <td className="py-3 px-2 whitespace-nowrap">{session.endTime ? new Date(session.endTime).toLocaleTimeString() : '-'}</td>
+                                        <td className="py-3 px-2 whitespace-nowrap">
                                             <span className={`px-2 py-1 rounded text-xs ${session.status === 'ONGOING' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'
                                                 }`}>
                                                 {session.status}
                                             </span>
                                         </td>
-                                        <td className="py-3 text-red-500">
+                                        <td className="py-3 px-2 text-red-500 whitespace-nowrap">
                                             {session.violationDuration ? `+${Math.floor(session.violationDuration / 60)}m ${session.violationDuration % 60}s` : '-'}
                                         </td>
                                     </tr>
@@ -190,7 +185,7 @@ const UserDashboard = () => {
                     setIsChangePasswordOpen(false);
                 }}
             />
-        </div>
+        </Layout>
     );
 };
 

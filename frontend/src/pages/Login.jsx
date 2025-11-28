@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { User, Lock } from 'lucide-react';
+import loginPlaceholder from '../assets/login_placeholder.png';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -76,7 +77,7 @@ const Login = () => {
             {/* Right Side - Image */}
             <div className="hidden md:block md:w-3/5 bg-gray-50 h-screen">
                 <img
-                    src="/src/assets/login_placeholder.png"
+                    src={loginPlaceholder}
                     alt="Login Cover"
                     className="w-full h-full object-cover"
                 />

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 import { useNavigate } from 'react-router-dom';
+import Layout from '../components/Layout';
 
 const AgentHistory = () => {
     const { user, logout } = useAuth();
@@ -84,37 +85,27 @@ const AgentHistory = () => {
 
     const filteredData = getFilteredHistory();
 
-    return (
-        <div className="min-h-screen bg-gray-50 flex">
-            {/* Sidebar */}
-            <div className="w-64 bg-blue-900 text-white p-6 flex flex-col fixed h-screen top-0 left-0">
-                <h1 className="text-2xl font-bold mb-8">Break Track</h1>
-                <nav className="flex-1">
-                    <button
-                        onClick={() => navigate('/dashboard')}
-                        className="block w-full text-left py-2 px-4 hover:bg-blue-800 rounded mb-2 transition"
-                    >
-                        Dashboard
-                    </button>
-                    <button
-                        onClick={() => navigate('/history')}
-                        className="block w-full text-left py-2 px-4 bg-blue-800 rounded mb-2 transition"
-                    >
-                        History
-                    </button>
-                </nav>
-                <button
-                    onClick={logout}
-                    className="bg-blue-700 py-2 rounded hover:bg-blue-600 w-full transition"
-                >
-                    Logout
-                </button>
-            </div>
-            <div className="w-64 bg-blue-900 text-white p-6 flex flex-col"></div>
+    const navLinks = (
+        <>
+            <button
+                onClick={() => navigate('/dashboard')}
+                className="block w-full text-left py-2 px-4 hover:bg-blue-800 rounded mb-2 transition"
+            >
+                Dashboard
+            </button>
+            <button
+                onClick={() => navigate('/history')}
+                className="block w-full text-left py-2 px-4 bg-blue-800 rounded mb-2 transition"
+            >
+                History
+            </button>
+        </>
+    );
 
-            {/* Main Content */}
-            <div className="flex-1 p-8">
-                <header className="flex justify-between items-center mb-8">
+    return (
+        <Layout navLinks={navLinks}>
+            <div className="p-4 md:p-8">
+                <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                     <h2 className="text-3xl font-bold text-gray-800">Break History</h2>
                     <div className="flex items-center gap-2">
                         <span className="text-gray-600">Welcome,</span>
@@ -152,7 +143,7 @@ const AgentHistory = () => {
                         <div className="flex items-end">
                             <button
                                 onClick={fetchHistory}
-                                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold"
+                                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold w-full md:w-auto"
                             >
                                 Refresh
                             </button>
@@ -217,8 +208,8 @@ const AgentHistory = () => {
                                             }
                                             return sum;
                                         }, 0) /
-                                            (filteredData.filter(s => s.endTime).length || 1) /
-                                            60
+                                        (filteredData.filter(s => s.endTime).length || 1) /
+                                        60
                                     )}{' '}
                                     m
                                 </p>
@@ -238,7 +229,7 @@ const AgentHistory = () => {
                                     {filteredData.length > 0
                                         ? Math.round(
                                             (filteredData.filter(s => s.violationDuration).length / filteredData.length) *
-                                                100
+                                            100
                                         )
                                         : 0}
                                     %
@@ -276,22 +267,22 @@ const AgentHistory = () => {
                             <table className="w-full">
                                 <thead>
                                     <tr className="bg-gray-50 border-b border-gray-200">
-                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider whitespace-nowrap">
                                             Break Type
                                         </th>
-                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider whitespace-nowrap">
                                             Start Time
                                         </th>
-                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider whitespace-nowrap">
                                             End Time
                                         </th>
-                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider whitespace-nowrap">
                                             Duration
                                         </th>
-                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider whitespace-nowrap">
                                             Status
                                         </th>
-                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider whitespace-nowrap">
                                             Violation
                                         </th>
                                     </tr>
@@ -299,19 +290,19 @@ const AgentHistory = () => {
                                 <tbody>
                                     {filteredData.map((session) => (
                                         <tr key={session.id} className="border-b border-gray-200 hover:bg-gray-50 transition">
-                                            <td className="px-6 py-4 text-sm font-semibold text-gray-900">
+                                            <td className="px-6 py-4 text-sm font-semibold text-gray-900 whitespace-nowrap">
                                                 {session.breakType.name}
                                             </td>
-                                            <td className="px-6 py-4 text-sm text-gray-700">
+                                            <td className="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
                                                 {formatDateTime(session.startTime)}
                                             </td>
-                                            <td className="px-6 py-4 text-sm text-gray-700">
+                                            <td className="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
                                                 {session.endTime ? formatDateTime(session.endTime) : '-'}
                                             </td>
-                                            <td className="px-6 py-4 text-sm text-gray-700">
+                                            <td className="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
                                                 {calculateDuration(session.startTime, session.endTime)}
                                             </td>
-                                            <td className="px-6 py-4 text-sm">
+                                            <td className="px-6 py-4 text-sm whitespace-nowrap">
                                                 <span
                                                     className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(
                                                         session.status
@@ -320,7 +311,7 @@ const AgentHistory = () => {
                                                     {session.status}
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-4 text-sm">
+                                            <td className="px-6 py-4 text-sm whitespace-nowrap">
                                                 {session.violationDuration ? (
                                                     <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800">
                                                         +{Math.floor(session.violationDuration / 60)}m{' '}
@@ -337,10 +328,8 @@ const AgentHistory = () => {
                         </div>
                     )}
                 </div>
-
-                
             </div>
-        </div>
+        </Layout>
     );
 };
 

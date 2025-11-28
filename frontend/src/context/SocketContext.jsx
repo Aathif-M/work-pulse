@@ -12,7 +12,7 @@ export const SocketProvider = ({ children }) => {
 
     useEffect(() => {
         if (user) {
-            const newSocket = io('http://localhost:3000', {
+            const newSocket = io(`http://${window.location.hostname}:3000`, {
                 query: { userId: user.id }
             });
             setSocket(newSocket);

@@ -5,6 +5,7 @@ import { useSocket } from '../context/SocketContext';
 import api from '../api/axios';
 import Timer from '../components/Timer';
 import ChangePasswordModal from '../components/ChangePasswordModal';
+import Layout from '../components/Layout';
 
 const ManagerDashboard = () => {
     const { user, logout } = useAuth();
@@ -13,43 +14,30 @@ const ManagerDashboard = () => {
     // Check if we are on the main dashboard page (not a sub-route)
     const isMainDashboard = location.pathname === '/manager' || location.pathname === '/manager/';
 
+    const navLinks = (
+        <>
+            <Link to="/manager" className={`block py-2 px-4 rounded mb-2 ${isMainDashboard ? 'bg-blue-800' : 'hover:bg-blue-800'}`}>Dashboard</Link>
+            <Link to="/manager/agents" className={`block py-2 px-4 rounded mb-2 ${location.pathname.includes('/agents') ? 'bg-blue-800' : 'hover:bg-blue-800'}`}>{user.role === 'SUPER_ADMIN' ? 'Users' : 'Agents'}</Link>
+            <Link to="/manager/breaks" className={`block py-2 px-4 rounded mb-2 ${location.pathname.includes('/breaks') ? 'bg-blue-800' : 'hover:bg-blue-800'}`}>Breaks</Link>
+            <Link to="/manager/history" className={`block py-2 px-4 rounded mb-2 ${location.pathname.includes('/history') ? 'bg-blue-800' : 'hover:bg-blue-800'}`}>History & Analytics</Link>
+        </>
+    );
+
     return (
-        <div className="min-h-screen bg-gray-50 flex">
-            {/* Sidebar */}
-            <div className="w-64 bg-blue-900 text-white p-6 flex flex-col fixed h-screen">
-                <h1 className="text-2xl font-bold mb-8">Break Track</h1>
-                <nav className="flex-1">
-                    <Link to="/manager" className={`block py-2 px-4 rounded mb-2 ${isMainDashboard ? 'bg-blue-800' : 'hover:bg-blue-800'}`}>Dashboard</Link>
-                    <Link to="/manager/agents" className={`block py-2 px-4 rounded mb-2 ${location.pathname.includes('/agents') ? 'bg-blue-800' : 'hover:bg-blue-800'}`}>{user.role === 'SUPER_ADMIN' ? 'Users' : 'Agents'}</Link>
-                    <Link to="/manager/breaks" className={`block py-2 px-4 rounded mb-2 ${location.pathname.includes('/breaks') ? 'bg-blue-800' : 'hover:bg-blue-800'}`}>Breaks</Link>
-                    <Link to="/manager/history" className={`block py-2 px-4 rounded mb-2 ${location.pathname.includes('/history') ? 'bg-blue-800' : 'hover:bg-blue-800'}`}>History & Analytics</Link>
-                </nav>
-                <div className="mt-auto">
-                    <div className="mb-4 text-sm text-blue-200">
-                        Logged in as: <br />
-                        <span className="font-bold text-white">{user.name}</span>
-                    </div>
-                    <button onClick={logout} className="w-full bg-blue-700 py-2 rounded hover:bg-blue-600 transition-colors">Logout</button>
-                </div>
-            </div>
-            <div className="w-64 bg-blue-900 text-white p-6 flex flex-col"></div>
+        <Layout navLinks={navLinks}>
+            <header className="bg-white shadow-sm p-6 mb-6">
+                <h2 className="text-2xl font-semibold text-gray-800">
+                    {isMainDashboard ? 'Manager Dashboard' :
+                        location.pathname.includes('/agents') ? 'Agent Management' :
+                            location.pathname.includes('/breaks') ? 'Break Management' :
+                                'Break History & Analytics'}
+                </h2>
+            </header>
 
-            {/* Main Content */}
-            <div className="flex-1 overflow-auto">
-                <header className="bg-white shadow-sm p-6 mb-6">
-                    <h2 className="text-2xl font-semibold text-gray-800">
-                        {isMainDashboard ? 'Manager Dashboard' :
-                            location.pathname.includes('/agents') ? 'Agent Management' :
-                                location.pathname.includes('/breaks') ? 'Break Management' :
-                                    'Break History & Analytics'}
-                    </h2>
-                </header>
-
-                <div className="p-6 pt-0">
-                    {isMainDashboard ? <DashboardContent /> : <Outlet />}
-                </div>
+            <div className="p-6 pt-0">
+                {isMainDashboard ? <DashboardContent /> : <Outlet />}
             </div>
-        </div>
+        </Layout>
     );
 };
 
