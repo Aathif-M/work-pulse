@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-const Timer = ({ startTime, expectedEndTime, status, onViolation }) => {
+const Timer = ({ startTime, expectedEndTime, status, onViolation, large = false }) => {
     const [timeLeft, setTimeLeft] = useState(0);
     const [isViolation, setIsViolation] = useState(false);
 
@@ -33,7 +33,10 @@ const Timer = ({ startTime, expectedEndTime, status, onViolation }) => {
     };
 
     return (
-        <div className={`text-4xl font-mono font-bold ${isViolation ? 'text-red-600' : 'text-green-600'}`}>
+        <div
+            className={`${large ? 'text-6xl md:text-8xl tracking-wider' : 'text-4xl font-mono'} font-bold ${isViolation ? 'text-red-600' : 'text-green-600'}`}
+            style={large ? { fontFamily: "'Orbitron', monospace" } : {}}
+        >
             {isViolation ? '+' : ''}{formatTime(timeLeft)}
         </div>
     );

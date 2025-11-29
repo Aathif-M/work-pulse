@@ -111,6 +111,7 @@ const UserDashboard = () => {
                                     startTime={currentSession.startTime}
                                     expectedEndTime={currentSession.expectedEndTime}
                                     status={currentSession.status}
+                                    large={true}
                                 />
                             </div>
                             <button
