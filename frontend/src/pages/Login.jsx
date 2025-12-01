@@ -31,7 +31,7 @@ const Login = () => {
             {/* Left Side - Form */}
             <div className="w-full md:w-2/5 flex flex-col justify-center px-8 md:px-16 lg:px-24 bg-white">
                 <div className="w-full max-w-md mx-auto">
-                    <h2 className="text-4xl font-bold mb-12 text-gray-800">Break Track</h2>
+                    <h2 className="text-4xl font-bold mb-12 text-gray-800">Work Pulse</h2>
 
                     {error && <p className="text-red-500 mb-4 text-sm">{error}</p>}
 

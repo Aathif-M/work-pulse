@@ -347,7 +347,7 @@ const ManagerHistory = () => {
 
         // Footer
         const footer = document.createElement('p');
-        footer.textContent = 'This is an automatically generated report from BreakTrack';
+        footer.textContent = 'This is an automatically generated report from Work Pulse';
         footer.style.textAlign = 'center';
         footer.style.fontSize = '10px';
         footer.style.color = '#999';
@@ -728,11 +728,10 @@ const ManagerHistory = () => {
                                                 {calculateDuration(session.startTime, session.endTime).display}
                                             </td>
                                             <td className="p-4">
-                                                <span className={`px-2 py-1 rounded text-xs ${
-                                                    session.status === 'ONGOING' 
-                                                        ? 'bg-blue-100 text-blue-800' 
+                                                <span className={`px-2 py-1 rounded text-xs ${session.status === 'ONGOING'
+                                                        ? 'bg-blue-100 text-blue-800'
                                                         : 'bg-gray-100 text-gray-800'
-                                                }`}>
+                                                    }`}>
                                                     {session.status}
                                                 </span>
                                             </td>

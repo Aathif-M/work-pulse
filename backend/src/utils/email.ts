@@ -40,13 +40,13 @@ export const sendViolationEmail = async (
             <p><strong>Actual Duration:</strong> ${data.actualDuration} minutes</p>
             <p style="color: #d9534f; font-weight: bold;"><strong>Violation Overstay:</strong> ${data.violationDuration} minutes</p>
             <br />
-            <p><em>BreakTrack System</em></p>
+            <p><em>WorkPulse System</em></p>
         </div>
     `;
 
     try {
         await transporter.sendMail({
-            from: `"BreakTrack System" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
+            from: `"WorkPulse System" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
             to: recipients,
             subject,
             html,
@@ -76,15 +76,15 @@ export const sendViolationAlertEmail = async (
             <p><strong>Agent:</strong> ${data.agentName}</p>
             <p><strong>Break Type:</strong> ${data.breakType}</p>
             <hr />
-            <p>The above agent's break has reached its expected end time and is now overdue. Please visit <a href="https://breaktrack.com">BreakTrack</a> to review the session.</p>
+            <p>The above agent's break has reached its expected end time and is now overdue. Please visit <a href="https://workpulse.us">WorkPulse</a> to review the session.</p>
             <br />
-            <p><em>BreakTrack System</em></p>
+            <p><em>WorkPulse System</em></p>
         </div>
     `;
 
     try {
         await transporter.sendMail({
-            from: `"BreakTrack System" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
+            from: `"WorkPulse System" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
             to: recipients,
             subject,
             html,

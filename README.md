@@ -1,6 +1,6 @@
-# BreakTrack
+# WorkPulse
 
-BreakTrack is a full-stack application designed to manage and track agent breaks and statuses in real-time. It provides distinct dashboards for Agents, Managers, and Super Admins to ensure efficient workflow and monitoring.
+WorkPulse is a full-stack application designed to manage and track agent breaks and statuses in real-time. It provides distinct dashboards for Agents, Managers, and Super Admins to ensure efficient workflow and monitoring.
 
 ## Features
 
@@ -42,7 +42,7 @@ BreakTrack is a full-stack application designed to manage and track agent breaks
 1.  **Clone the repository**
     ```bash
     git clone <repository-url>
-    cd BreakTrack
+    cd WorkPulse
     ```
 
 2.  **Backend Setup**
