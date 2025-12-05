@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '../api/axios';
 import Modal from '../components/Modal';
 import { Plus, Trash2, Edit } from 'lucide-react';
+import LoadingComponent from '../components/LoadingComponent';
 
 const ManagerBreaks = () => {
     const [breaks, setBreaks] = useState([]);
@@ -70,6 +71,10 @@ const ManagerBreaks = () => {
         setisEditModalOpen(false);
     };
 
+
+
+    if (loading) return <LoadingComponent message="Loading breaks..." />;
+
     return (
         <div className="p-8">
             <div className="flex justify-between items-center mb-6">
@@ -102,7 +107,7 @@ const ManagerBreaks = () => {
                                         {Math.floor(bt.duration / 60)}:{(bt.duration % 60).toString().padStart(2, '0')}
                                     </td>
                                     <td className="p-4">
-                                        <span className={`px-2 py-1 rounded text-xs ${bt.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                                        <span className={`px-2 py-1 rounded text-xs font-medium ${bt.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                                             {bt.isActive ? 'Active' : 'Disabled'}
                                         </span>
                                     </td>
@@ -190,6 +195,8 @@ const ManagerBreaks = () => {
             </Modal>
         </div >
     );
+
+
 };
 
 export default ManagerBreaks;

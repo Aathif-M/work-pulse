@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
+import LoadingComponent from '../components/LoadingComponent';
 
 const AgentHistory = () => {
     const { user, logout } = useAuth();
@@ -242,11 +243,8 @@ const AgentHistory = () => {
                 {/* History Table Section */}
                 <div className="bg-white rounded-lg shadow-sm overflow-hidden">
                     {loading ? (
-                        <div className="p-8 text-center">
-                            <div className="inline-block animate-spin">
-                                <div className="h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full"></div>
-                            </div>
-                            <p className="text-gray-600 mt-4">Loading break history...</p>
+                        <div className="p-8">
+                            <LoadingComponent message="Loading break history..." />
                         </div>
                     ) : error ? (
                         <div className="p-8 text-center">

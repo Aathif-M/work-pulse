@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../api/axios';
 import html2pdf from 'html2pdf.js';
+import LoadingComponent from '../components/LoadingComponent';
 
 const ManagerHistory = () => {
     const [history, setHistory] = useState([]);
@@ -486,7 +487,7 @@ const ManagerHistory = () => {
                         <label className="block text-sm font-semibold text-gray-700 mb-2">Search Agent</label>
                         <input
                             type="text"
-                            placeholder="Search agent name..."
+                            placeholder="Search agent..."
                             value={searchAgent}
                             onChange={(e) => setSearchAgent(e.target.value)}
                             className="w-full input-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
@@ -589,7 +590,7 @@ const ManagerHistory = () => {
                             <option value="oldest">Oldest First</option>
                             <option value="longest">Longest Duration</option>
                             <option value="violations">Most Violations</option>
-                            <option value="agent">Agent Name</option>
+                            <option value="agent">Agent</option>
                         </select>
                     </div>
                 </div>
@@ -703,9 +704,8 @@ const ManagerHistory = () => {
                 </div>
                 <div className="overflow-x-auto">
                     {loading ? (
-                        <div className="p-12 text-center">
-                            <div className="spinner mx-auto mb-4"></div>
-                            <p className="text-gray-600 font-medium">Loading break history...</p>
+                        <div className="p-12">
+                            <LoadingComponent message="Loading break history..." />
                         </div>
                     ) : filteredData.length === 0 ? (
                         <div className="p-12 text-center">
@@ -761,7 +761,7 @@ const ManagerHistory = () => {
                                                     onClick={() => setExpandedRow(expandedRow === session.id ? null : session.id)}
                                                     className="text-blue-600 hover:text-blue-800 font-bold text-sm transition"
                                                 >
-                                                    {expandedRow === session.id ? '▼ Hide' : '▶ View'}
+                                                    {expandedRow === session.id ? '➖ Hide' : '➕ View'}
                                                 </button>
                                             </td>
                                         </tr>
@@ -770,7 +770,7 @@ const ManagerHistory = () => {
                                                 <td colSpan="8" className="p-6 border-b border-blue-200">
                                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                                         <div className="bg-gray-50 p-6 rounded-lg shadow border-l-4 border-blue-700">
-                                                            <p className="text-xs text-gray-600 font-bold uppercase mb-1">Agent Name</p>
+                                                            <p className="text-xs text-gray-600 font-bold uppercase mb-1">Agent</p>
                                                             <p className="font-bold text-gray-900 text-lg">
                                                                 {session.user?.name}
                                                             </p>

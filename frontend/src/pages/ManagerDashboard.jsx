@@ -6,6 +6,7 @@ import api from '../api/axios';
 import Timer from '../components/Timer';
 import ChangePasswordModal from '../components/ChangePasswordModal';
 import Layout from '../components/Layout';
+import LoadingComponent from '../components/LoadingComponent';
 
 const ManagerDashboard = () => {
     const { user, logout } = useAuth();
@@ -80,7 +81,7 @@ const DashboardContent = () => {
         }
     };
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <LoadingComponent message="Loading dashboard..." />;
 
     return (
         <div className="bg-white p-6 rounded-lg shadow-sm">
@@ -89,8 +90,8 @@ const DashboardContent = () => {
                 <table className="w-full text-left">
                     <thead>
                         <tr className="border-b bg-gray-50">
-                            <th className="p-4 text-gray-600 font-medium">ID</th>
-                            <th className="p-4 text-gray-600 font-medium">Agent Name</th>
+
+                            <th className="p-4 text-gray-600 font-medium">Agent</th>
                             <th className="p-4 text-gray-600 font-medium">Role</th>
                             <th className="p-4 text-gray-600 font-medium">Status</th>
                             <th className="p-4 text-gray-600 font-medium">Break Type</th>
@@ -104,7 +105,7 @@ const DashboardContent = () => {
                             const activeSession = agent.breakSessions?.[0];
                             return (
                                 <tr key={agent.id} className="border-b last:border-0 hover:bg-gray-50">
-                                    <td className="p-4 text-gray-500">#{agent.id.toString().padStart(3, '0')}</td>
+
                                     <td className="p-4 font-medium">{agent.name}</td>
                                     <td className="p-4">
                                         <span className={`px-2 py-1 rounded text-xs font-medium ${agent.role === 'MANAGER' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'

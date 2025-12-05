@@ -5,6 +5,7 @@ import api from '../api/axios';
 import Timer from '../components/Timer';
 import ChangePasswordModal from '../components/ChangePasswordModal';
 import Layout from '../components/Layout';
+import LoadingComponent from '../components/LoadingComponent';
 
 const UserDashboard = () => {
     const { user, logout } = useAuth();
@@ -54,12 +55,16 @@ const UserDashboard = () => {
     };
 
     const endBreak = async () => {
+        const previousSession = currentSession;
+        setCurrentSession(null); // Optimistic update
+
         try {
             await api.post('/breaks/end');
-            setCurrentSession(null);
             fetchData();
         } catch (error) {
             console.error(error);
+            setCurrentSession(previousSession); // Revert on failure
+            alert("Failed to end break. Please try again.");
         }
     };
 
@@ -79,6 +84,8 @@ const UserDashboard = () => {
             </button>
         </>
     );
+
+    if (loading) return <LoadingComponent message="Loading dashboard..." />;
 
     return (
         <Layout navLinks={navLinks}>

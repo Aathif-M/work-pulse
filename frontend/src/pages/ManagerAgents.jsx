@@ -3,6 +3,7 @@ import api from '../api/axios';
 import Modal from '../components/Modal';
 import { Plus, Trash2, RotateCcw, Edit } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import LoadingComponent from '../components/LoadingComponent';
 
 const ManagerAgents = () => {
     const { user } = useAuth();
@@ -79,6 +80,10 @@ const ManagerAgents = () => {
         setIsModalOpen(true);
     };
 
+
+
+    if (loading) return <LoadingComponent message="Loading users..." />;
+
     return (
         <div className="p-8">
             <div className="flex justify-between items-center mb-6">
@@ -97,7 +102,7 @@ const ManagerAgents = () => {
                     <table className="w-full text-left">
                         <thead className="bg-gray-50 border-b">
                             <tr>
-                                <th className="p-4 text-gray-600 font-medium">ID</th>
+
                                 <th className="p-4 text-gray-600 font-medium">Name</th>
                                 <th className="p-4 text-gray-600 font-medium">Email</th>
                                 <th className="p-4 text-gray-600 font-medium">Role</th>
@@ -108,7 +113,7 @@ const ManagerAgents = () => {
                         <tbody>
                             {agents.map(agent => (
                                 <tr key={agent.id} className="border-b last:border-0 hover:bg-gray-50">
-                                    <td className="p-4 text-gray-500">#{agent.id.toString().padStart(3, '0')}</td>
+
                                     <td className="p-4 font-medium">{agent.name}</td>
                                     <td className="p-4 text-gray-600">{agent.email}</td>
                                     <td className="p-4">
@@ -195,6 +200,8 @@ const ManagerAgents = () => {
             </Modal>
         </div >
     );
+
+
 };
 
 export default ManagerAgents;

@@ -8,11 +8,12 @@ import ManagerDashboard from './pages/ManagerDashboard';
 import ManagerAgents from './pages/ManagerAgents';
 import ManagerBreaks from './pages/ManagerBreaks';
 import ManagerHistory from './pages/ManagerHistory';
+import LoadingComponent from './components/LoadingComponent';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <LoadingComponent fullScreen message="Verifying session..." />;
   if (!user) return <Navigate to="/login" />;
   if (allowedRoles && !allowedRoles.includes(user.role)) {
     return <Navigate to="/" />; // Redirect to home or unauthorized page
