@@ -41,6 +41,8 @@ const ManagerBreaks = () => {
             }
             setisAddModalOpen(false);
             setisEditModalOpen(false);
+            setisAddModalOpen(false);
+            setisEditModalOpen(false);
             setFormData({ name: '', duration: 600 });
             setDurationSplit({ minutes: 10, seconds: 0 });
             setEditingId(null);

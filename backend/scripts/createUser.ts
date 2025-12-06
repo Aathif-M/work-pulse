@@ -1,9 +1,6 @@
-// npx ts-node scripts/createUser.ts
+// npx ts-node backend/scripts/createUser.ts - to run script
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
-import dotenv from 'dotenv';
-
-dotenv.config({ override: true });
 
 const prisma = new PrismaClient();
 

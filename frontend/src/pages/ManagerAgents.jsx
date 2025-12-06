@@ -43,6 +43,7 @@ const ManagerAgents = () => {
                 await api.post('/users', { ...formData, assignedBreaks: selectedBreaks });
             }
             setIsModalOpen(false);
+            setIsModalOpen(false);
             setFormData({ name: '', email: '', role: 'AGENT' });
             setSelectedBreaks([]);
             setEditingId(null);
