@@ -4,6 +4,7 @@ import api from '../api/axios';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import LoadingComponent from '../components/LoadingComponent';
+import CustomSelect from '../components/CustomSelect';
 
 const AgentHistory = () => {
     const { user, logout } = useAuth();
@@ -119,27 +120,27 @@ const AgentHistory = () => {
                     <div className="flex flex-col md:flex-row gap-4">
                         <div className="flex-1">
                             <label className="block text-sm font-semibold text-gray-700 mb-2">Filter by Status</label>
-                            <select
+                            <CustomSelect
                                 value={filterStatus}
                                 onChange={(e) => setFilterStatus(e.target.value)}
-                                className="input-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            >
-                                <option value="ALL">All Status</option>
-                                <option value="ONGOING">Ongoing</option>
-                                <option value="ENDED">Ended</option>
-                            </select>
+                                options={[
+                                    { value: 'ALL', label: 'All Status' },
+                                    { value: 'ONGOING', label: 'Ongoing' },
+                                    { value: 'ENDED', label: 'Ended' }
+                                ]}
+                            />
                         </div>
                         <div className="flex-1">
                             <label className="block text-sm font-semibold text-gray-700 mb-2">Sort By</label>
-                            <select
+                            <CustomSelect
                                 value={sortBy}
                                 onChange={(e) => setSortBy(e.target.value)}
-                                className="input-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            >
-                                <option value="recent">Most Recent</option>
-                                <option value="oldest">Oldest First</option>
-                                <option value="violations">Most Violations</option>
-                            </select>
+                                options={[
+                                    { value: 'recent', label: 'Most Recent' },
+                                    { value: 'oldest', label: 'Oldest First' },
+                                    { value: 'violations', label: 'Most Violations' }
+                                ]}
+                            />
                         </div>
                         <div className="flex items-end">
                             <button

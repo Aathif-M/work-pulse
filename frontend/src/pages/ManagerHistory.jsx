@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '../api/axios';
 import html2pdf from 'html2pdf.js';
 import LoadingComponent from '../components/LoadingComponent';
+import CustomSelect from '../components/CustomSelect';
 
 const ManagerHistory = () => {
     const [history, setHistory] = useState([]);
@@ -496,64 +497,62 @@ const ManagerHistory = () => {
 
                     <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">Filter by Agent</label>
-                        <select
+                        <CustomSelect
                             value={filterAgent}
                             onChange={(e) => setFilterAgent(e.target.value)}
-                            className="w-full input-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                        >
-                            <option value="ALL">All Agents</option>
-                            {agents.filter(a => a.role === 'AGENT').map(agent => (
-                                <option key={agent.id} value={agent.id}>
-                                    {agent.name}
-                                </option>
-                            ))}
-                        </select>
+                            options={[
+                                { value: 'ALL', label: 'All Agents' },
+                                ...agents.filter(a => a.role === 'AGENT').map(agent => ({
+                                    value: agent.id,
+                                    label: agent.name
+                                }))
+                            ]}
+                        />
                     </div>
 
                     <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">Break Type</label>
-                        <select
+                        <CustomSelect
                             value={filterBreakType}
                             onChange={(e) => setFilterBreakType(e.target.value)}
-                            className="w-full input-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                        >
-                            <option value="ALL">All Types</option>
-                            {breakTypes.map(type => (
-                                <option key={type.id} value={type.id}>
-                                    {type.name}
-                                </option>
-                            ))}
-                        </select>
+                            options={[
+                                { value: 'ALL', label: 'All Types' },
+                                ...breakTypes.map(type => ({
+                                    value: type.id,
+                                    label: type.name
+                                }))
+                            ]}
+                        />
                     </div>
 
                     <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">Status</label>
-                        <select
+                        <CustomSelect
                             value={filterStatus}
                             onChange={(e) => setFilterStatus(e.target.value)}
-                            className="w-full input-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                        >
-                            <option value="ALL">All Status</option>
-                            <option value="ONGOING">Ongoing</option>
-                            <option value="ENDED">Ended</option>
-                        </select>
+                            options={[
+                                { value: 'ALL', label: 'All Status' },
+                                { value: 'ONGOING', label: 'Ongoing' },
+                                { value: 'ENDED', label: 'Ended' }
+                            ]}
+                        />
                     </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-4">
                     <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">Date Range</label>
-                        <select
+                        <CustomSelect
                             value={dateRange}
                             onChange={(e) => setDateRange(e.target.value)}
-                            className="w-full input-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                        >
-                            <option value="all">All Time</option>
-                            <option value="today">Today</option>
-                            <option value="week">This Week</option>
-                            <option value="month">This Month</option>
-                            <option value="custom">Custom Range</option>
-                        </select>
+                            options={[
+                                { value: 'all', label: 'All Time' },
+                                { value: 'today', label: 'Today' },
+                                { value: 'week', label: 'This Week' },
+                                { value: 'month', label: 'This Month' },
+                                { value: 'custom', label: 'Custom Range' }
+                            ]}
+                        />
                     </div>
 
                     {dateRange === 'custom' && (
@@ -581,17 +580,17 @@ const ManagerHistory = () => {
 
                     <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">Sort By</label>
-                        <select
+                        <CustomSelect
                             value={sortBy}
                             onChange={(e) => setSortBy(e.target.value)}
-                            className="w-full input-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                        >
-                            <option value="recent">Most Recent</option>
-                            <option value="oldest">Oldest First</option>
-                            <option value="longest">Longest Duration</option>
-                            <option value="violations">Most Violations</option>
-                            <option value="agent">Agent</option>
-                        </select>
+                            options={[
+                                { value: 'recent', label: 'Most Recent' },
+                                { value: 'oldest', label: 'Oldest First' },
+                                { value: 'longest', label: 'Longest Duration' },
+                                { value: 'violations', label: 'Most Violations' },
+                                { value: 'agent', label: 'Agent' }
+                            ]}
+                        />
                     </div>
                 </div>
 

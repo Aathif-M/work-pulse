@@ -4,6 +4,7 @@ import Modal from '../components/Modal';
 import { Plus, Trash2, RotateCcw, Edit } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import LoadingComponent from '../components/LoadingComponent';
+import CustomSelect from '../components/CustomSelect';
 
 const ManagerAgents = () => {
     const { user } = useAuth();
@@ -205,14 +206,14 @@ const ManagerAgents = () => {
                     {user.role === 'SUPER_ADMIN' && (
                         <div className="mb-6">
                             <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
-                            <select
+                            <CustomSelect
                                 value={formData.role}
                                 onChange={e => setFormData({ ...formData, role: e.target.value })}
-                                className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none"
-                            >
-                                <option value="AGENT">Agent</option>
-                                <option value="MANAGER">Manager</option>
-                            </select>
+                                options={[
+                                    { value: 'AGENT', label: 'Agent' },
+                                    { value: 'MANAGER', label: 'Manager' }
+                                ]}
+                            />
                         </div>
                     )}
 
@@ -246,9 +247,21 @@ const ManagerAgents = () => {
                                     );
                                 })}
                             </div>
-                            <div className="flex justify-end mt-2 text-xs gap-3">
-                                <button type="button" onClick={() => setSelectedBreaks(breakTypes.map(b => b.id))} className="text-blue-600 hover:underline">Select All</button>
-                                <button type="button" onClick={() => setSelectedBreaks([])} className="text-gray-500 hover:underline">Deselect All</button>
+                            <div className="flex justify-end mt-3 gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setSelectedBreaks(breakTypes.map(b => b.id))}
+                                    className="px-3 py-1.5 rounded text-xs font-medium bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                                >
+                                    Select All
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setSelectedBreaks([])}
+                                    className="px-3 py-1.5 rounded text-xs font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
+                                >
+                                    Deselect All
+                                </button>
                             </div>
                         </div>
                     )}
